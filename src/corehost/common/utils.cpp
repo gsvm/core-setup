@@ -195,6 +195,8 @@ const pal::char_t* get_arch()
     return _X("arm");
 #elif defined(_TARGET_ARM64_)
     return _X("arm64");
+#elif defined(_TARGET_MIPS64_)
+    return _X("mips64");
 #else
 #error "Unknown target"
 #endif

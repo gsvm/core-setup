@@ -62,7 +62,7 @@ usage()
     echo ""
     echo "Options:"
     echo "  --configuration <configuration>   Build configuration (Debug, Release)"
-    echo "  --arch <Architecture>             Target Architecture (x64, x86, arm, arm64, armel)"
+    echo "  --arch <Architecture>             Target Architecture (x64, x86, arm, arm64, armel, mips64)"
     echo "  --hostver <Dotnet host version>   Version of the dotnet executable"
     echo "  --apphostver <app host version>   Version of the apphost executable"
     echo "  --fxrver <HostFxr version>        Version of the hostfxr library"
@@ -171,6 +171,9 @@ case $__build_arch in
     arm64)
         __arch_define=-DCLI_CMAKE_PLATFORM_ARCH_ARM64=1
         ;;
+    mips64)
+        __arch_define=-DCLI_CMAKE_PLATFORM_ARCH_MIPS64=1
+        ;;
     *)
         echo "Unknown architecture $__build_arch"; usage; exit 1
         ;;
@@ -242,7 +245,7 @@ echo "Building Corehost from $DIR to $(pwd)"
 set -x # turn on trace
 if [ $__CrossBuild == 1 ]; then
     # clang-3.9 or clang-4.0 are default compilers for cross compilation
-    if [[ "$__build_arch" != "arm" && "$__build_arch" != "armel" ]]; then
+    if [[ "$__build_arch" != "arm" && "$__build_arch" != "armel" && "$__build_arch" != "mips64" ]]; then
         if command -v "clang-3.9" > /dev/null 2>&1; then
             export CC="$(command -v clang-3.9)"
             export CXX="$(command -v clang++-3.9)"
@@ -253,6 +256,9 @@ if [ $__CrossBuild == 1 ]; then
     elif command -v "clang-5.0" > /dev/null 2>&1; then
         export CC="$(command -v clang-5.0)"
         export CXX="$(command -v clang++-5.0)"
+    elif command -v "clang-6.0" > /dev/null 2>&1; then
+        export CC="$(command -v clang-6.0)"
+        export CXX="$(command -v clang++-6.0)"
     else
         echo "Unable to find Clang 3.9 or Clang 4.0 or Clang 5.0 Compiler"
         echo "Install clang-3.9 or clang-4.0 or clang-5.0 for cross compilation"
